@@ -18,7 +18,7 @@ export default function DiscusFish(props) {
 
   materialClone.depthTest = true;
   materialClone.depthWrite = true;
-  materialClone.shadowSide = DoubleSide;
+  materialClone.side = DoubleSide;
   materialClone.transparent = true;
 
   materialClone.map = sceneClone.children[1].children[0].material.map.clone();
