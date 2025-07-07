@@ -1,7 +1,7 @@
 
 import { useFrame, useThree } from "@react-three/fiber";
 import {  useMemo, useRef } from "react";
-import { Vector3, Vector2, Euler } from "three";
+import { Vector3, Vector2 } from "three";
 import { randFloat } from "three/src/math/MathUtils.js";
 
 
