@@ -4,6 +4,7 @@ import WaterPlane from "./waterPlane"
 import WaterParticles from "./waterParticles"
 import Boids from "./Boids"
 import Fish1Model from "./fish1Model"
+import DiscusFish from "./fish/DiscusFish"
 import Fish2Model from "./fish2Model"
 import BackgroundPlane from "./backgroundPlane"
 import WaterRipplesPlane from "./waterRipplesPlane"
@@ -12,7 +13,7 @@ import ScrollCamera from "./cameraScroll"
 import {Canvas} from "@react-three/fiber"
 import { Environment} from "@react-three/drei"
 import { Suspense} from "react"
-import {boid1Settings, boid2Settings} from "./settings"
+import {boid1Settings, boid2Settings, discusSettings} from "./settings"
 import * as THREE from "three";
 
 export default function WaterScene({elements,sceneHeight})
@@ -30,14 +31,14 @@ export default function WaterScene({elements,sceneHeight})
                 <spotLight color={"#bcecff"} intensity={900} position={[0,sceneHeight*1.5,-10]} angle={3*Math.PI/2} decay={1.5}/>
                 <spotLight color={"#bcecff"} intensity={1000} position={[0,sceneHeight*1.5,-20]} angle={3*Math.PI/2} decay={1.5}/>
                 <directionalLight color={"#bcecff"} intensity={1}/>
-                <ambientLight intensity={1} color={"#99e2ff"}/>
+                <ambientLight intensity={1} color={"#99fcff"}/>
                 
 
                 <Suspense>
                     <ScrollCamera sceneHeight={sceneHeight}/>
                     {elements.map((e)=>e)}
                     <WaterParticles sceneHeight={sceneHeight}/>
-                    <Boids fish={Fish1Model} position={[0,0,15]} depth={5} settings={boid1Settings} avoidMouse={false} sceneHeight={sceneHeight}/>
+                    <Boids fish={DiscusFish} position={[0,0,10]} depth={5} settings={discusSettings} avoidMouse={false} sceneHeight={sceneHeight}/>
                     <Boids fish={Fish2Model} position={[0,0,0]} depth={10} settings={boid2Settings} avoidMouse={true} sceneHeight={sceneHeight}/>
                     <WaterPlane sceneHeight={sceneHeight}/>
                     <WaterRipplesPlane sceneHeight={sceneHeight}/>

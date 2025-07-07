@@ -89,7 +89,6 @@ export default function WaterRipplesPlane({sceneHeight})
         renderTargetB = renderTargetA;
         renderTargetA = temp;
 
-        console.log(newPointer);
         refs.current.prevMouse = new THREE.Vector2(pointer.x, pointer.y);
     });
 
