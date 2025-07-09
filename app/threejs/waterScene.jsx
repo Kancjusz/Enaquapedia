@@ -5,6 +5,7 @@ import WaterParticles from "./waterParticles"
 import Boids from "./Boids"
 import Fish1Model from "./fish1Model"
 import DiscusFish from "./fish/DiscusFish"
+import NeonTetraFish from "./fish/NeonTetraFish"
 import Fish2Model from "./fish2Model"
 import BackgroundPlane from "./backgroundPlane"
 import WaterRipplesPlane from "./waterRipplesPlane"
@@ -13,7 +14,7 @@ import ScrollCamera from "./cameraScroll"
 import {Canvas} from "@react-three/fiber"
 import { Environment} from "@react-three/drei"
 import { Suspense} from "react"
-import {boid1Settings, boid2Settings, discusSettings} from "./settings"
+import {boid1Settings, boid2Settings, discusSettings, neonTetraSettings} from "./settings"
 import * as THREE from "three";
 
 export default function WaterScene({elements,sceneHeight})
@@ -38,7 +39,8 @@ export default function WaterScene({elements,sceneHeight})
                     <ScrollCamera sceneHeight={sceneHeight}/>
                     {elements.map((e)=>e)}
                     <WaterParticles sceneHeight={sceneHeight}/>
-                    <Boids fish={DiscusFish} position={[0,0,10]} depth={5} settings={discusSettings} avoidMouse={false} sceneHeight={sceneHeight}/>
+                    <Boids fish={DiscusFish} position={[0,0,8]} depth={5} settings={discusSettings} avoidMouse={false} sceneHeight={sceneHeight}/>
+                    <Boids fish={NeonTetraFish} position={[0,0,10]} depth={5} settings={neonTetraSettings} avoidMouse={true} sceneHeight={sceneHeight}/>
                     <Boids fish={Fish2Model} position={[0,0,0]} depth={10} settings={boid2Settings} avoidMouse={true} sceneHeight={sceneHeight}/>
                     <WaterPlane sceneHeight={sceneHeight}/>
                     <WaterRipplesPlane sceneHeight={sceneHeight}/>
