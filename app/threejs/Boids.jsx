@@ -19,7 +19,7 @@ const cohesion = new Vector3();
 const steering = new Vector3();
 
 export default function Boids ({ fish, position, depth, settings, avoidMouse, sceneHeight}) {
-  const {viewport} = useThree();
+  const {viewport,camera} = useThree();
   const zDistance = position[2]/5 +1;
   let boundaries = {x:viewport.width/zDistance, y:(sceneHeight + viewport.height/2), z:depth};
 
@@ -170,6 +170,7 @@ export default function Boids ({ fish, position, depth, settings, avoidMouse, sc
       <group position={position}>
         {boids.map((boid, index) => (
         <Boid
+          depth={camera.position.z - position[2]}
           boundaries={boundaries}
           key={index}
           Fish={fish}
@@ -187,6 +188,7 @@ export default function Boids ({ fish, position, depth, settings, avoidMouse, sc
 };
 
 const Boid = ({
+  depth,
   Fish,
   boundaries,
   position,
@@ -202,24 +204,27 @@ const Boid = ({
   const {viewport} = useThree();
   const prevPointer = useRef(new Vector2(0,0));
 
-  useFrame(({pointer},delta) => {
-
-
-    //SCROLL ADJUST
+  useFrame(({pointer, camera},delta) => {
 
     var scrollTop = window.scrollY;
     var docHeight = document.documentElement.scrollHeight;
     var winHeight = window.innerHeight;
 
-    var scrollRange = (scrollTop) / (docHeight - winHeight) * -2 + 1; //from -1 to 1
+    let width = Math.tan((camera.fov/360) * Math.PI)*Math.abs(depth) * 2;
+    let height = width * (winHeight/window.innerWidth);
+    const fullHeight = width * (docHeight/window.innerWidth);
+    const adjustHeight = (fullHeight - height)/2;
+
+    //SCROLL ADJUST
+
+    var scrollRange = (scrollTop) / (docHeight - winHeight)*2 - 1; //from -1 to 1
 
     //FISH AVOIDANCE
     const target = group.current.clone(false);
 
     const xyBoidPos = new Vector2(position.x,position.y);
-    const transformedPointer = new Vector2(pointer.x * boundaries.x * 0.5, pointer.y * boundaries.y * 0.5 + sceneHeight/2 * scrollRange);
+    const transformedPointer = new Vector2(pointer.x * width, pointer.y * (height) - sceneHeight/2 * scrollRange);
     const transformedPointerV3 = new Vector3(transformedPointer.x, transformedPointer.y, position.z);
-
 
     let lookAtVector = group.current.position.clone().add(velocity);
     let copyPosition = position.clone();
@@ -249,6 +254,8 @@ const Boid = ({
     }
 
     copyPosition.add(velocity);
+    //copyPosition.set(transformedPointerV3.x,transformedPointerV3.y,transformedPointerV3.z);
+    //transformedPointerV3.set()
 
     target.lookAt(lookAtVector);
     group.current.quaternion.slerp(target.quaternion, 0.1);
