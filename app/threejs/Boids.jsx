@@ -19,9 +19,15 @@ const cohesion = new Vector3();
 const steering = new Vector3();
 
 export default function Boids ({ fish, position, depth, settings, avoidMouse, sceneHeight, count=null}) {
-  const {viewport,camera} = useThree();
-  const zDistance = position[2]/5 +1;
-  let boundaries = {x:viewport.width/zDistance, y:(sceneHeight + viewport.height/2), z:depth};
+  const {camera} = useThree();
+
+  const docHeight = document.documentElement.scrollHeight;
+  const cameraDepth = camera.position.z - position[2]
+
+  const width = Math.tan((camera.fov/360) * Math.PI)*Math.abs(cameraDepth) * 2;
+  const height = width * (docHeight/window.innerWidth);
+
+  let boundaries = {x:width*2, y:(sceneHeight + height), z:depth};
 
   const { MIN_SCALE, MAX_SCALE, MIN_SPEED, MAX_SPEED, MAX_STEERING } = settings.general;
   const NB_BOIDS = count == null ? settings.general.NB_BOIDS : count;
@@ -202,19 +208,16 @@ const Boid = ({
 
   const { MIN_SCALE, MAX_SCALE, MIN_SPEED, MAX_SPEED } = generalSettings;
   const group = useRef();
-  const {viewport} = useThree();
   const prevPointer = useRef(new Vector2(0,0));
 
   useFrame(({pointer, camera},delta) => {
 
-    var scrollTop = window.scrollY;
-    var docHeight = document.documentElement.scrollHeight;
-    var winHeight = window.innerHeight;
+    const scrollTop = window.scrollY;
+    const docHeight = document.documentElement.scrollHeight;
+    const winHeight = window.innerHeight;
 
-    let width = Math.tan((camera.fov/360) * Math.PI)*Math.abs(depth) * 2;
-    let height = width * (winHeight/window.innerWidth);
-    const fullHeight = width * (docHeight/window.innerWidth);
-    const adjustHeight = (fullHeight - height)/2;
+    const width = boundaries.x/2;
+    const height = width * (winHeight/window.innerWidth);
 
     //SCROLL ADJUST
 
@@ -224,7 +227,7 @@ const Boid = ({
     const target = group.current.clone(false);
 
     const xyBoidPos = new Vector2(position.x,position.y);
-    const transformedPointer = new Vector2(pointer.x * width, pointer.y * (height) - sceneHeight/2 * scrollRange);
+    const transformedPointer = new Vector2(pointer.x * boundaries.x/2, pointer.y * height - sceneHeight/2 * scrollRange);
     const transformedPointerV3 = new Vector3(transformedPointer.x, transformedPointer.y, position.z);
 
     let lookAtVector = group.current.position.clone().add(velocity);
