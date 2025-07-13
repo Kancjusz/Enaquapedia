@@ -18,12 +18,13 @@ const cohesion = new Vector3();
 
 const steering = new Vector3();
 
-export default function Boids ({ fish, position, depth, settings, avoidMouse, sceneHeight}) {
+export default function Boids ({ fish, position, depth, settings, avoidMouse, sceneHeight, count=null}) {
   const {viewport,camera} = useThree();
   const zDistance = position[2]/5 +1;
   let boundaries = {x:viewport.width/zDistance, y:(sceneHeight + viewport.height/2), z:depth};
 
-  const { NB_BOIDS, MIN_SCALE, MAX_SCALE, MIN_SPEED, MAX_SPEED, MAX_STEERING } = settings.general;
+  const { MIN_SCALE, MAX_SCALE, MIN_SPEED, MAX_SPEED, MAX_STEERING } = settings.general;
+  const NB_BOIDS = count == null ? settings.general.NB_BOIDS : count;
 
   const { threeD, ALIGNEMENT, AVOIDANCE, COHESION } = settings.rules
   const { WANDER_RADIUS, WANDER_STRENGTH} = settings.wander

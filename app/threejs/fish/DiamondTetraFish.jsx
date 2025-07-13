@@ -10,6 +10,7 @@ export default function DiamondTetraFish(props) {
   const material = materials['Material.001'];
   material.depthWrite = true;
   material.depthTest = true;
+  material.transparent= true;
   const modelAnimations = useAnimations(animations, props.ref)
 
   useEffect(() => {

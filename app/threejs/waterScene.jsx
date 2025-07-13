@@ -25,7 +25,6 @@ export default function WaterScene({elements,sceneHeight})
             <Canvas style={{background:"#0c5e7d"}} camera={{position:[0,0,20]}} 
                 gl={{ antialias: true, toneMapping: THREE.NoToneMapping }} linear
                 >
-                <fog attach="fog" args={["#2c7089", 0, 28]}/>
                 <BackgroundPlane/>
                 <spotLight color={"#bcecff"} intensity={500} position={[0,sceneHeight*1.5,20]} angle={3*Math.PI/2} decay={1.5}/>
                 <spotLight color={"#bcecff"} intensity={600} position={[0,sceneHeight*1.5,10]} angle={3*Math.PI/2} decay={1.5}/>
@@ -42,7 +41,8 @@ export default function WaterScene({elements,sceneHeight})
                     <WaterParticles sceneHeight={sceneHeight}/>
                     <Boids fish={DiscusFish} position={[0,0,8]} depth={5} settings={discusSettings} avoidMouse={false} sceneHeight={sceneHeight}/>
                     <Boids fish={NeonTetraFish} position={[0,0,2]} depth={8} settings={neonTetraSettings} avoidMouse={true} sceneHeight={sceneHeight}/>
-                    <Boids fish={DiamondTetraFish} position={[0,0,10]} depth={5} settings={diamondTetraSettings} avoidMouse={true} sceneHeight={sceneHeight}/>
+                    <Boids fish={DiamondTetraFish} position={[0,0,10]} depth={5} settings={diamondTetraSettings} avoidMouse={false} sceneHeight={sceneHeight}/>
+                    <Boids fish={NeonTetraFish} position={[0,0,12]} depth={4} settings={neonTetraSettings} avoidMouse={true} sceneHeight={sceneHeight} count={50}/>
                     <WaterPlane sceneHeight={sceneHeight}/>
                     <WaterRipplesPlane sceneHeight={sceneHeight}/>
                     <Environment preset="city" environmentIntensity={0.2}/>
