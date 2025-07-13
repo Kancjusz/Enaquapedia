@@ -36,9 +36,47 @@ export const discusSettings = {
     },
 }
 
+export const diamondTetraSettings = {
+    general: {
+        NB_BOIDS: 24,
+        MIN_SCALE: 0.1,
+        MAX_SCALE: 0.25,
+        MIN_SPEED: 0.9,
+        MAX_SPEED: 1,
+        MAX_STEERING: 0.1
+    },
+
+    rules: {
+      threeD: true,
+      ALIGNEMENT: false,
+      AVOIDANCE: true,
+      COHESION: false,
+    },
+
+    wander: {
+      WANDER_RADIUS: 2,
+      WANDER_STRENGTH: 10,
+    },
+
+    alignment:{
+      ALIGN_RADIUS: 1.2,
+      ALIGN_STRENGTH: 4,
+    },
+
+    avoidance:{
+      AVOID_RADIUS: 2,
+      AVOID_STRENGTH: 10,
+    },
+
+    cohesion: {
+      COHESION_RADIUS: 1.22,
+      COHESION_STRENGTH: 4,
+    },
+}
+
 export const neonTetraSettings = {
     general: {
-        NB_BOIDS: 100,
+        NB_BOIDS: 200,
         MIN_SCALE: 0.1,
         MAX_SCALE: 0.15,
         MIN_SPEED: 0.9,
