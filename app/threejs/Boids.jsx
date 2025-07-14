@@ -167,9 +167,6 @@ export default function Boids ({ fish, position, depth, settings, avoidMouse, sc
         0,
         remap(boid.scale, MIN_SCALE, MAX_SCALE, MAX_SPEED, MIN_SPEED) * delta
       );
-
-      // APPLY VELOCITY
-      //boid.position.add(boid.velocity);
     }
   });
 
@@ -181,6 +178,7 @@ export default function Boids ({ fish, position, depth, settings, avoidMouse, sc
           boundaries={boundaries}
           key={index}
           Fish={fish}
+          offset={position}
           position={boid.position}
           scale={boid.scale}
           velocity={boid.velocity}
@@ -197,6 +195,7 @@ export default function Boids ({ fish, position, depth, settings, avoidMouse, sc
 const Boid = ({
   depth,
   Fish,
+  offset,
   boundaries,
   position,
   velocity,
@@ -210,7 +209,7 @@ const Boid = ({
   const group = useRef();
   const prevPointer = useRef(new Vector2(0,0));
 
-  useFrame(({pointer, camera},delta) => {
+  useFrame(({pointer},delta) => {
 
     const scrollTop = window.scrollY;
     const docHeight = document.documentElement.scrollHeight;
@@ -226,7 +225,8 @@ const Boid = ({
     //FISH AVOIDANCE
     const target = group.current.clone(false);
 
-    const xyBoidPos = new Vector2(position.x,position.y);
+    const xyBoidPos = new Vector2(position.x + offset[0],position.y + offset[1]);
+    const xyzBoidPos = new Vector3(xyBoidPos.x,xyBoidPos.y,position.z);
     const transformedPointer = new Vector2(pointer.x * boundaries.x/2, pointer.y * height - sceneHeight/2 * scrollRange);
     const transformedPointerV3 = new Vector3(transformedPointer.x, transformedPointer.y, position.z);
 
@@ -238,7 +238,7 @@ const Boid = ({
 
     if(distance < maxDistance && !(pointer.x == prevPointer.current.x && pointer.y == prevPointer.current.y) && avoidMouse)
     {
-      const subtractedVec = position.clone().sub(transformedPointerV3);
+      const subtractedVec = xyzBoidPos.clone().sub(transformedPointerV3);
       lookAtVector = position.clone().add(subtractedVec);
 
       const axis = velocity.clone().cross(subtractedVec);
@@ -258,8 +258,6 @@ const Boid = ({
     }
 
     copyPosition.add(velocity);
-    //copyPosition.set(transformedPointerV3.x,transformedPointerV3.y,transformedPointerV3.z);
-    //transformedPointerV3.set()
 
     target.lookAt(lookAtVector);
     group.current.quaternion.slerp(target.quaternion, 0.1);
