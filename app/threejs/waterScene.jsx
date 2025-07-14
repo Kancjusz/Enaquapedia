@@ -39,9 +39,9 @@ export default function WaterScene({elements,sceneHeight})
                     <ScrollCamera sceneHeight={sceneHeight}/>
                     {elements.map((e)=>e)}
                     <WaterParticles sceneHeight={sceneHeight}/>
-                    <Boids fish={DiscusFish} position={[0,0,8]} depth={5} settings={discusSettings} avoidMouse={false} sceneHeight={sceneHeight}/>
+                    <Boids fish={DiscusFish} position={[0,0,8]} size={new THREE.Vector2(1,0.5)} depth={5} settings={discusSettings} avoidMouse={false} sceneHeight={sceneHeight}/>
                     <Boids fish={NeonTetraFish} position={[0,0,2]} depth={8} settings={neonTetraSettings} avoidMouse={true} sceneHeight={sceneHeight}/>
-                    <Boids fish={DiamondTetraFish} position={[0,0,10]} depth={5} settings={diamondTetraSettings} avoidMouse={false} sceneHeight={sceneHeight}/>
+                    <Boids fish={DiamondTetraFish} position={[0,0,10]} size={new THREE.Vector2(1,0.5)} depth={5} settings={diamondTetraSettings} avoidMouse={false} sceneHeight={sceneHeight}/>
                     <Boids fish={NeonTetraFish} position={[0,0,12]} depth={4} settings={neonTetraSettings} avoidMouse={true} sceneHeight={sceneHeight} count={50}/>
                     <WaterPlane sceneHeight={sceneHeight}/>
                     <WaterRipplesPlane sceneHeight={sceneHeight}/>

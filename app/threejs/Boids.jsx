@@ -18,7 +18,7 @@ const cohesion = new Vector3();
 
 const steering = new Vector3();
 
-export default function Boids ({ fish, position, depth, settings, avoidMouse, sceneHeight, count=null}) {
+export default function Boids ({ fish, position, depth, settings, avoidMouse, sceneHeight, count=null, size=new Vector2(1,1)}) {
   const {camera} = useThree();
 
   const docHeight = document.documentElement.scrollHeight;
@@ -27,7 +27,7 @@ export default function Boids ({ fish, position, depth, settings, avoidMouse, sc
   const width = Math.tan((camera.fov/360) * Math.PI)*Math.abs(cameraDepth) * 2;
   const height = width * (docHeight/window.innerWidth);
 
-  let boundaries = {x:width*2, y:(sceneHeight + height), z:depth};
+  let boundaries = {x:width*2*size.x, y:(sceneHeight + height)*size.y, z:depth};
 
   const { MIN_SCALE, MAX_SCALE, MIN_SPEED, MAX_SPEED, MAX_STEERING } = settings.general;
   const NB_BOIDS = count == null ? settings.general.NB_BOIDS : count;
