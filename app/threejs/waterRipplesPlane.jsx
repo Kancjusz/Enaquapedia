@@ -1,7 +1,7 @@
 'use client';
 
 import { OrthographicCamera, useFBO } from "@react-three/drei";
-import { useFrame, useThree } from "@react-three/fiber";
+import { invalidate, useFrame, useThree } from "@react-three/fiber";
 import {rippleVertex, rippleFragment, renderVertex, renderFragment} from "./shaders/ripplesShader"
 import { useRef } from "react";
 import * as THREE from "three";
@@ -55,6 +55,9 @@ export default function WaterRipplesPlane({sceneHeight})
 
     useFrame(({clock, pointer, gl, scene, camera})=>{
 
+        camera.layers.disableAll();
+        camera.layers.enable(0);
+
         //SCROLL
         var scrollTop = window.scrollY;
         var docHeight = document.documentElement.scrollHeight;
@@ -85,6 +88,9 @@ export default function WaterRipplesPlane({sceneHeight})
         gl.render(scene, camera);
         gl.setRenderTarget(null);
 
+        camera.layers.disableAll();
+        camera.layers.enable(2);
+
         const temp = renderTargetB;
         renderTargetB = renderTargetA;
         renderTargetA = temp;
@@ -94,8 +100,8 @@ export default function WaterRipplesPlane({sceneHeight})
 
     return(
         <>
-            <OrthographicCamera position={[1000,0,1]} ref={secondaryCamera}/>
-            <mesh ref={plane1} scale={[width,height,1]} position={[1000,0,0]}>
+            <OrthographicCamera position={[2000,0,1]} ref={secondaryCamera}/>
+            <mesh ref={plane1} scale={[width,height,1]} position={[2000,0,0]}>
                 <planeGeometry/>
                 <shaderMaterial
                     ref={material1}
@@ -107,7 +113,7 @@ export default function WaterRipplesPlane({sceneHeight})
                     toneMapped={false}
                 />
             </mesh>
-            <mesh ref={plane2} scale={[viewport.width/20 * viewport.dpr,viewport.height/20* viewport.dpr,1]} position={[0,sceneHeight/2,19]}>
+            <mesh ref={plane2} layers={[2]} scale={[viewport.width/20 * viewport.dpr,viewport.height/20* viewport.dpr,1]} position={[0,sceneHeight/2,19]}>
                 <planeGeometry/>
                 <shaderMaterial
                     ref={material2}
@@ -116,7 +122,8 @@ export default function WaterRipplesPlane({sceneHeight})
                     uniforms={uniformsRender.current}
                     depthWrite={true}
                     depthTest={true}
-                    toneMapped={false}
+                    toneMapped={true}
+                    transparent={true}
                 />
             </mesh>
         </>

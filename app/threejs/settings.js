@@ -76,7 +76,7 @@ export const diamondTetraSettings = {
 
 export const neonTetraSettings = {
     general: {
-        NB_BOIDS: 200,
+        NB_BOIDS: 300,
         MIN_SCALE: 0.1,
         MAX_SCALE: 0.15,
         MIN_SPEED: 0.9,
@@ -92,8 +92,8 @@ export const neonTetraSettings = {
     },
 
     wander: {
-      WANDER_RADIUS: 2,
-      WANDER_STRENGTH: 3,
+      WANDER_RADIUS: 3,
+      WANDER_STRENGTH: 4,
     },
 
     alignment:{
@@ -107,7 +107,7 @@ export const neonTetraSettings = {
     },
 
     cohesion: {
-      COHESION_RADIUS: 8,
+      COHESION_RADIUS: 16,
       COHESION_STRENGTH: 6,
     },
 }
