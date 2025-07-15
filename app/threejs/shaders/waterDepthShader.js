@@ -15,7 +15,7 @@ export const fragment = `
     void main() {
 
         vec3 tint = vec3(0., 0., 0.);
-        vec4 color = vec4(tint,1.-vUv.y);
+        vec4 color = vec4(tint,1.-(vUv.y/2.+0.5));
 
         gl_FragColor = color;  
     }
