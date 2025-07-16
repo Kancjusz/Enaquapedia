@@ -14,7 +14,9 @@ export default function BluefaceAngelFish(props) {
   const modelAnimations = useAnimations(animations, props.ref)
 
   useEffect(() => {
-    modelAnimations.actions[modelAnimations.names[0]].play();
+    const clip = modelAnimations.actions[modelAnimations.names[0]];
+    clip.timeScale = 3;
+    clip.play();
   }, [])
 
   return (

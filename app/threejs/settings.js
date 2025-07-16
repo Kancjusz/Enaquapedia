@@ -40,7 +40,45 @@ export const diamondTetraSettings = {
     general: {
         NB_BOIDS: 24,
         MIN_SCALE: 0.1,
-        MAX_SCALE: 0.25,
+        MAX_SCALE: 0.2,
+        MIN_SPEED: 1.5,
+        MAX_SPEED: 2,
+        MAX_STEERING: 0.1
+    },
+
+    rules: {
+      threeD: true,
+      ALIGNEMENT: false,
+      AVOIDANCE: true,
+      COHESION: false,
+    },
+
+    wander: {
+      WANDER_RADIUS: 2,
+      WANDER_STRENGTH: 10,
+    },
+
+    alignment:{
+      ALIGN_RADIUS: 1.2,
+      ALIGN_STRENGTH: 4,
+    },
+
+    avoidance:{
+      AVOID_RADIUS: 2,
+      AVOID_STRENGTH: 10,
+    },
+
+    cohesion: {
+      COHESION_RADIUS: 1.22,
+      COHESION_STRENGTH: 4,
+    },
+}
+
+export const indianSalfinTangSettings = {
+    general: {
+        NB_BOIDS: 15,
+        MIN_SCALE: 0.7,
+        MAX_SCALE: 1,
         MIN_SPEED: 0.9,
         MAX_SPEED: 1,
         MAX_STEERING: 0.1
@@ -78,9 +116,9 @@ export const bluefaceAngelfishSettings = {
     general: {
         NB_BOIDS: 24,
         MIN_SCALE: 0.3,
-        MAX_SCALE: 0.4,
-        MIN_SPEED: 0.9,
-        MAX_SPEED: 1,
+        MAX_SCALE: 0.5,
+        MIN_SPEED: 1.5,
+        MAX_SPEED: 2,
         MAX_STEERING: 0.1
     },
 
