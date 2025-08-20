@@ -9,6 +9,8 @@ import DiscusFish from "./fish/DiscusFish"
 import NeonTetraFish from "./fish/NeonTetraFish"
 import DiamondTetraFish from "./fish/DiamondTetraFish"
 import BluefaceAngelFish from "./fish/BluefaceAngelFish"
+import Clownfish from "./fish/Clownfish"
+import Cardinalfish from "./fish/Cardinalfish"
 import IndianSalfinTang from "./fish/IndianSalfinTang"
 import BackgroundPlane from "./backgroundPlane"
 import WaterRipplesPlane from "./waterRipplesPlane"
@@ -17,7 +19,7 @@ import ScrollCamera from "./cameraScroll"
 import {Canvas} from "@react-three/fiber"
 import { Environment} from "@react-three/drei"
 import { Suspense} from "react"
-import { discusSettings, neonTetraSettings,diamondTetraSettings, bluefaceAngelfishSettings, indianSalfinTangSettings} from "./settings"
+import { discusSettings, neonTetraSettings,diamondTetraSettings, bluefaceAngelfishSettings, indianSalfinTangSettings, clownfishSettings} from "./settings"
 import * as THREE from "three";
 
 export default function WaterScene({elements,sceneHeight})
@@ -46,11 +48,13 @@ export default function WaterScene({elements,sceneHeight})
                     <Boids fish={DiscusFish} position={[0,35,8]} size={new THREE.Vector2(1,0.2)} depth={5} settings={discusSettings} avoidMouse={false} sceneHeight={sceneHeight}/>
                     <Boids fish={NeonTetraFish} position={[0,sceneHeight/2,2]} depth={8} size={new THREE.Vector2(1,0.6)} settings={neonTetraSettings} avoidMouse={true} sceneHeight={sceneHeight}/>
                     <Boids fish={DiamondTetraFish} position={[0,40,10]} size={new THREE.Vector2(1,0.2)} depth={5} settings={diamondTetraSettings} avoidMouse={false} sceneHeight={sceneHeight}/>
-                    <Boids fish={NeonTetraFish} position={[0,sceneHeight/2,12]} depth={4} size={new THREE.Vector2(1,0.25)} settings={neonTetraSettings} avoidMouse={true} sceneHeight={sceneHeight} count={35}/>
-                    <Boids fish={NeonTetraFish} position={[0,sceneHeight/4,12]} depth={4} size={new THREE.Vector2(1,0.25)} settings={neonTetraSettings} avoidMouse={true} sceneHeight={sceneHeight} count={35}/>
+                    <Boids fish={NeonTetraFish} position={[0,sceneHeight/2,11]} depth={4} size={new THREE.Vector2(1,0.25)} settings={neonTetraSettings} avoidMouse={true} sceneHeight={sceneHeight} count={35}/>
+                    <Boids fish={NeonTetraFish} position={[0,sceneHeight/4,15]} depth={4} size={new THREE.Vector2(1,0.25)} settings={neonTetraSettings} avoidMouse={true} sceneHeight={sceneHeight} count={35}/>
                     <Boids fish={NeonTetraFish} position={[0,-10,12]} depth={4} size={new THREE.Vector2(1,0.15)} settings={neonTetraSettings} avoidMouse={true} sceneHeight={sceneHeight} count={35}/>
                     <Boids fish={BluefaceAngelFish} position={[0,0,10]} size={new THREE.Vector2(1,0.2)} depth={5} settings={bluefaceAngelfishSettings} avoidMouse={false} sceneHeight={sceneHeight}/>
                     <Boids fish={IndianSalfinTang} position={[0,-20,6]} size={new THREE.Vector2(1,0.2)} depth={5} settings={indianSalfinTangSettings} avoidMouse={false} sceneHeight={sceneHeight}/>
+                    <Boids fish={Clownfish} position={[0,-50,12]} size={new THREE.Vector2(0.5,0.3)} depth={5} settings={clownfishSettings} avoidMouse={true} sceneHeight={sceneHeight}/>
+                    <Boids fish={Cardinalfish} position={[0,-50,15]} size={new THREE.Vector2(1,0.3)} depth={5} settings={clownfishSettings} avoidMouse={true} sceneHeight={sceneHeight}/>
                     <WaterPlane sceneHeight={sceneHeight}/>
                     <WaterDepthPlane sceneHeight={sceneHeight}/>
                     <WaterRipplesPlane sceneHeight={sceneHeight}/>

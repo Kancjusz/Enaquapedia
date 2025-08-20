@@ -175,7 +175,7 @@ export default function Boids ({ fish, position, depth, settings, avoidMouse, sc
         {boids.map((boid, index) => (
         <Boid
           depth={camera.position.z - position[2]}
-          boundaries={boundaries}
+          boundaries={{x:width*2, y: boundaries.y}}
           key={index}
           Fish={fish}
           offset={position}
@@ -227,7 +227,7 @@ const Boid = ({
 
     const xyBoidPos = new Vector2(position.x + offset[0],position.y + offset[1]);
     const xyzBoidPos = new Vector3(xyBoidPos.x,xyBoidPos.y,position.z);
-    const transformedPointer = new Vector2(pointer.x * boundaries.x/2, pointer.y * height - sceneHeight/2 * scrollRange);
+    const transformedPointer = new Vector2(pointer.x * width, pointer.y * height - sceneHeight/2 * scrollRange);
     const transformedPointerV3 = new Vector3(transformedPointer.x, transformedPointer.y, position.z);
 
     let lookAtVector = group.current.position.clone().add(velocity);

@@ -187,3 +187,41 @@ export const neonTetraSettings = {
       COHESION_STRENGTH: 6,
     },
 }
+
+export const clownfishSettings = {
+    general: {
+        NB_BOIDS: 50,
+        MIN_SCALE: 0.1,
+        MAX_SCALE: 0.15,
+        MIN_SPEED: 0.9,
+        MAX_SPEED: 3.6,
+        MAX_STEERING: 0.1
+    },
+
+    rules: {
+      threeD: true,
+      ALIGNEMENT: true,
+      AVOIDANCE: true,
+      COHESION: true,
+    },
+
+    wander: {
+      WANDER_RADIUS: 3,
+      WANDER_STRENGTH: 6,
+    },
+
+    alignment:{
+      ALIGN_RADIUS: 10,
+      ALIGN_STRENGTH: 7,
+    },
+
+    avoidance:{
+      AVOID_RADIUS: 2,
+      AVOID_STRENGTH: 5,
+    },
+
+    cohesion: {
+      COHESION_RADIUS: 5,
+      COHESION_STRENGTH: 5,
+    },
+}
