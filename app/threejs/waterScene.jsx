@@ -18,7 +18,7 @@ import WaterRipplesPlane from "./waterRipplesPlane"
 
 import ScrollCamera from "./cameraScroll"
 import {Canvas} from "@react-three/fiber"
-import { Environment} from "@react-three/drei"
+import { Environment, Stats} from "@react-three/drei"
 import { Suspense} from "react"
 import { discusSettings, neonTetraSettings,diamondTetraSettings, bluefaceAngelfishSettings, indianSalfinTangSettings, clownfishSettings} from "./settings"
 import * as THREE from "three";
@@ -40,7 +40,7 @@ export default function WaterScene({elements,sceneHeight})
                 <directionalLight color={"#bcecff"} intensity={1}/>
                 <ambientLight intensity={1} color={"#99fcff"}/>
                 
-
+                <Stats/>
                 <Suspense>
                     <ScrollCamera sceneHeight={sceneHeight}/>
                     {elements.map((e)=>e)}

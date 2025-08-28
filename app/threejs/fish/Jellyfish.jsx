@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useGLTF, useAnimations } from '@react-three/drei'
 import { SkeletonUtils } from 'three/examples/jsm/Addons.js';
-import { Group, LoopOnce, LoopRepeat, Vector3 } from 'three';
-import { useFrame, useThree } from '@react-three/fiber';
+import { Group } from 'three';
+import { useFrame } from '@react-three/fiber';
 
 export default function Jellyfish(props) {
   const { scene, materials, animations } = useGLTF('/models/jellyfish.glb')
@@ -15,7 +15,7 @@ export default function Jellyfish(props) {
   const time = useRef(0);
   const goalDistance = 5;
 
-  const [index,setIndex] = useState(0);
+  const index = useRef(0);
 
   const material = materials['Material.001'];
   material.depthWrite = true;
@@ -23,11 +23,8 @@ export default function Jellyfish(props) {
   material.transparent= true;
   const modelAnimations = useAnimations(animations,clone);
 
-  useEffect(() => {
-    if(!didEffect.current) {
-      didEffect.current = true;
-      return;
-    }
+  const playAnimation = (index) => {
+    console.log(index);
     const oppositeIndex = Math.abs(index-1)
     const rand = Math.random() * oppositeIndex;
 
@@ -35,17 +32,32 @@ export default function Jellyfish(props) {
     clip.setDuration(7);
     clip.startAt(3 * rand);
     clip.reset().fadeIn(2).play();
-  
-    const eventFunc = () => {
-      modelAnimations.actions[modelAnimations.names[index]].fadeOut(1.5 * oppositeIndex + 0.5);
-      setIndex(oppositeIndex);
+  }
+
+  useEffect(()=>{
+    if(!didEffect.current) {
+      didEffect.current = true;
+      return;
     }
 
-    clip.getMixer().addEventListener("loop",eventFunc);
+    playAnimation(0);
+    const clip1 = modelAnimations.actions[modelAnimations.names[0]];
 
-    return () => clip.getMixer().removeEventListener("loop",eventFunc);
+    const eventFunc = () => {
+      const oppositeIndex = Math.abs(index.current-1);
+      modelAnimations.actions[modelAnimations.names[index.current]].fadeOut(1.5 * oppositeIndex + 0.5);
+      index.current = oppositeIndex;
+      playAnimation(oppositeIndex)
+    }
 
-  }, [index])
+    clip1.getMixer().addEventListener("loop",eventFunc);
+
+    return () => {
+      clip1.getMixer().removeEventListener("loop",eventFunc);
+      console.log("cos");
+    }
+
+  },[])
 
   useFrame(({clock})=>{
     let delta = clock.getDelta();
@@ -54,7 +66,7 @@ export default function Jellyfish(props) {
     let rotationY = Math.sin(clock.elapsedTime / 50) * delta * 0.5;
     jellyfishRef.current.rotateY(rotationY);
 
-    if(index == 1 && clipTime >= 2.3){
+    if(index.current == 1 && clipTime >= 2.3){
       let timeFactor = (1-(clipTime-2.3)/4);
 
       let distanceFactor = Math.min(Math.abs(distance.current - jellyfishRef.current.position.y) / goalDistance,1);
