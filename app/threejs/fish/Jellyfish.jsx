@@ -1,13 +1,11 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { useGLTF, useAnimations } from '@react-three/drei'
 import { SkeletonUtils } from 'three/examples/jsm/Addons.js';
 import { Group } from 'three';
 import { useFrame } from '@react-three/fiber';
 
 export default function Jellyfish(props) {
-  const { scene, materials, animations } = useGLTF('/models/jellyfish.glb')
 
-  const clone = useMemo(() => SkeletonUtils.clone(scene), [scene]);
   const jellyfishRef = useRef(new Group());
   const didEffect = useRef(false);
 
@@ -17,18 +15,13 @@ export default function Jellyfish(props) {
 
   const index = useRef(0);
 
-  const material = materials['Material.001'];
-  material.depthWrite = true;
-  material.depthTest = true;
-  material.transparent= true;
-  const modelAnimations = useAnimations(animations,clone);
+  const modelAnimations = useRef();
 
   const playAnimation = (index) => {
-    console.log(index);
     const oppositeIndex = Math.abs(index-1)
-    const rand = Math.random() * oppositeIndex;
+    const rand = props.rand.value * oppositeIndex;
 
-    const clip = modelAnimations.actions[modelAnimations.names[index]];
+    const clip = modelAnimations.current.actions[modelAnimations.current.names[index]];
     clip.setDuration(7);
     clip.startAt(3 * rand);
     clip.reset().fadeIn(2).play();
@@ -41,11 +34,11 @@ export default function Jellyfish(props) {
     }
 
     playAnimation(0);
-    const clip1 = modelAnimations.actions[modelAnimations.names[0]];
+    const clip1 = modelAnimations.current.actions[modelAnimations.current.names[0]];
 
     const eventFunc = () => {
       const oppositeIndex = Math.abs(index.current-1);
-      modelAnimations.actions[modelAnimations.names[index.current]].fadeOut(1.5 * oppositeIndex + 0.5);
+      modelAnimations.current.actions[modelAnimations.current.names[index.current]].fadeOut(1.5 * oppositeIndex + 0.5);
       index.current = oppositeIndex;
       playAnimation(oppositeIndex)
     }
@@ -54,17 +47,14 @@ export default function Jellyfish(props) {
 
     return () => {
       clip1.getMixer().removeEventListener("loop",eventFunc);
-      console.log("cos");
     }
 
   },[])
 
-  useFrame(({clock})=>{
-    let delta = clock.getDelta();
-    const clipTime = modelAnimations.actions[modelAnimations.names[1]].time;
+  useFrame(({clock},delta)=>{
+    const clipTime = modelAnimations.current.actions[modelAnimations.current.names[1]].time;
 
-    let rotationY = Math.sin(clock.elapsedTime / 50) * delta * 0.5;
-    jellyfishRef.current.rotateY(rotationY);
+    jellyfishRef.current.rotateY(props.rotationOffset.value);
 
     if(index.current == 1 && clipTime >= 2.3){
       let timeFactor = (1-(clipTime-2.3)/4);
@@ -75,22 +65,38 @@ export default function Jellyfish(props) {
 
       jellyfishRef.current.translateY(offsetY);
     }else{
-      let offsetX = Math.sin(clock.elapsedTime / 5) * delta * 0.5;
-      let offsetY = (Math.sin(clock.elapsedTime / 7)-1.3) * delta * 0.45;
-
-      jellyfishRef.current.translateX(offsetX);
-      jellyfishRef.current.translateY(offsetY);
-
+      jellyfishRef.current.translateX(props.offsetIdle.x);
+      jellyfishRef.current.translateY(props.offsetIdle.y);
 
       distance.current = jellyfishRef.current.position.y + goalDistance;
       time.current = clock.elapsedTime;
-
     }
-  },[])
+  })
 
   return (
-    <group {...props} dispose={null} ref={jellyfishRef}>
-      <primitive object={clone} rotation-y={Math.PI}/>
+    <JellyfishModel ref={jellyfishRef} modelAnimations={modelAnimations} position={props.position} scale={props.scale} rand={props.rand.value}/>
+  )
+}
+
+function JellyfishModel({position,scale,ref,modelAnimations,rand})
+{
+  const { scene, materials, animations } = useGLTF('/models/jellyfish.glb')
+
+  const clone = useMemo(() => SkeletonUtils.clone(scene), [scene]);
+  const pos = useRef(position)
+
+  const material = materials['Material.001'];
+  material.depthWrite = true;
+  material.depthTest = true;
+  material.transparent= true;
+  modelAnimations.current = {...useAnimations(animations.slice(),clone)};
+  modelAnimations.current.mixer.timeScale = rand+1;
+  //modelAnimations.current.actions.Idle.setDuration(7*(rand+1) * (1/rand));
+  //console.log(modelAnimations.current.actions.Idle.duration);
+
+  return (
+    <group ref={ref} position={position} scale={scale} dispose={null}>
+      <primitive object={clone}/>
     </group>
   )
 }

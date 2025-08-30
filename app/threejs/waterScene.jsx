@@ -11,6 +11,7 @@ import DiamondTetraFish from "./fish/DiamondTetraFish"
 import BluefaceAngelFish from "./fish/BluefaceAngelFish"
 import Clownfish from "./fish/Clownfish"
 import Jellyfish from "./fish/Jellyfish"
+import Smack from "./fish/Smack"
 import Cardinalfish from "./fish/Cardinalfish"
 import IndianSalfinTang from "./fish/IndianSalfinTang"
 import BackgroundPlane from "./backgroundPlane"
@@ -56,7 +57,7 @@ export default function WaterScene({elements,sceneHeight})
                     <Boids fish={IndianSalfinTang} position={[0,-15,6]} size={new THREE.Vector2(1,0.15)} depth={5} settings={indianSalfinTangSettings} avoidMouse={false} sceneHeight={sceneHeight}/>
                     <Boids fish={Clownfish} position={[0,-45,12]} size={new THREE.Vector2(0.5,0.15)} depth={5} settings={clownfishSettings} avoidMouse={true} sceneHeight={sceneHeight}/>
                     <Boids fish={Cardinalfish} position={[0,-45,15]} size={new THREE.Vector2(1,0.15)} depth={5} settings={clownfishSettings} avoidMouse={true} sceneHeight={sceneHeight}/>
-                    <Jellyfish position={[0,-80,10]} scale={[0.5,0.5,0.5]}/>
+                    <Smack position={[0,-90,4]} scale={0.5} depth={2} count={12} sceneHeight={sceneHeight} size={new THREE.Vector2(0.5,0.03)}/>
                     <WaterPlane sceneHeight={sceneHeight}/>
                     <WaterDepthPlane sceneHeight={sceneHeight}/>
                     <WaterRipplesPlane sceneHeight={sceneHeight}/>

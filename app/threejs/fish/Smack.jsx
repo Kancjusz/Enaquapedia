@@ -1,0 +1,64 @@
+import { Vector2, Vector3, Vector4 } from 'three';
+import { useFrame, useThree } from "@react-three/fiber";
+import Jellyfish from './Jellyfish';
+import { useEffect, useMemo } from 'react';
+
+export default function Smack({position, scale, depth, size, count=5, sceneHeight})
+{
+    const {camera} = useThree();
+
+    const docHeight = document.documentElement.scrollHeight;
+
+    const calculatePosInBounds = (cameraDepth) => {
+        const width = Math.tan((camera.fov/360) * Math.PI)*Math.abs(cameraDepth) * 2;
+        const height = width * (docHeight/window.innerWidth);
+
+        const boundaries = {x:width*2*size.x, y:(sceneHeight + height)*size.y};
+
+        return new Vector3(
+            position[0] + boundaries.x * (Math.random() * 2 - 1),
+            position[1] + boundaries.y * (Math.random() * 2 - 1),
+            camera.position.z - cameraDepth
+        )
+    }
+
+    const depthDivider = 2 * depth / count;
+    const jellyfishTransforms = useMemo(()=>{
+        return new Array(count).fill().map((_,i)=>({
+            pos: calculatePosInBounds(
+                camera.position.z - (position[2] + depth * (Math.random() * depthDivider - depth + depthDivider * i))
+            ),
+            offsetIdle: new Vector2(0,0),
+            rotationOffset: {value:0},
+            rand: {value:Math.random()},
+            s: scale * (Math.random()+0.5)
+        }));
+    },[])
+
+    useFrame(({clock},delta)=>{
+        jellyfishTransforms.forEach((e)=>{
+
+            let offsetX = Math.sin((clock.elapsedTime + 123456789 * e.rand.value) / 5) * delta * 0.5;
+            let offsetY = (Math.sin((clock.elapsedTime + 123456789 * e.rand.value) / 7)-1.3) * delta * 0.45 * (e.rand.value*2 + (1/e.rand.value/10));
+
+            e.offsetIdle.setX(offsetX);
+            e.offsetIdle.setY(offsetY);
+
+            e.rotationOffset.value = Math.sin((clock.elapsedTime + 123456789 * e.rand.value) / 50) * delta * 0.5 * e.rand.value;
+
+            e.pos.add(new Vector3(offsetX,offsetY,0));
+        })
+    });
+
+    return(
+        <group>
+            {jellyfishTransforms.map((e,i)=>{
+                return <Jellyfish 
+                    key={i} position={e.pos} scale={[e.s,e.s,e.s]} 
+                    offsetIdle={e.offsetIdle}
+                    rotationOffset={e.rotationOffset} rand={e.rand}
+                />
+            })}
+        </group>
+    );
+}
