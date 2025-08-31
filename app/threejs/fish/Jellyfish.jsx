@@ -1,10 +1,12 @@
-import { useEffect, useMemo, useRef } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useGLTF, useAnimations } from '@react-three/drei'
 import { SkeletonUtils } from 'three/examples/jsm/Addons.js';
-import { Group } from 'three';
+import { Group, Vector3 } from 'three';
 import { useFrame } from '@react-three/fiber';
 
 export default function Jellyfish(props) {
+
+  const posOnBlur = useRef(new Vector3().copy(props.position));
 
   const jellyfishRef = useRef(new Group());
   const didEffect = useRef(false);
@@ -17,7 +19,6 @@ export default function Jellyfish(props) {
 
   const modelAnimations = useRef();
 
-  const maxBoundsDistance = 5;
   const baseOffset = 0.01;
 
   const playAnimation = (index) => {
@@ -50,6 +51,7 @@ export default function Jellyfish(props) {
 
     return () => {
       clip1.getMixer().removeEventListener("loop",eventFunc);
+      didEffect.current = false;
     }
 
   },[])
@@ -80,7 +82,7 @@ export default function Jellyfish(props) {
   })
 
   return (
-    <JellyfishModel ref={jellyfishRef} modelAnimations={modelAnimations} position={props.position} scale={props.scale} rand={props.rand.value}/>
+    <JellyfishModel ref={jellyfishRef} modelAnimations={modelAnimations} position={posOnBlur.current} scale={props.scale} rand={props.rand.value}/>
   )
 }
 
@@ -89,12 +91,12 @@ function JellyfishModel({position,scale,ref,modelAnimations,rand})
   const { scene, materials, animations } = useGLTF('/models/jellyfish.glb')
 
   const clone = useMemo(() => SkeletonUtils.clone(scene), [scene]);
-  const pos = useRef(position)
 
   const material = materials['Material.001'];
   material.depthWrite = true;
   material.depthTest = true;
-  material.transparent= true;
+  material.transparent = true;
+  material.needsUpdate = true;
   modelAnimations.current = {...useAnimations(animations.slice(),clone)};
   modelAnimations.current.mixer.timeScale = rand+1;
   //modelAnimations.current.actions.Idle.setDuration(7*(rand+1) * (1/rand));

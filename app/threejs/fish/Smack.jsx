@@ -1,11 +1,13 @@
-import { Vector2, Vector3, Vector4 } from 'three';
+import { Vector2, Vector3 } from 'three';
 import { useFrame, useThree } from "@react-three/fiber";
 import Jellyfish from './Jellyfish';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 
 export default function Smack({position, scale, depth, size, count=5, sceneHeight})
 {
     const {camera} = useThree();
+
+    const tabHasFocus = useRef(true);
 
     const docHeight = document.documentElement.scrollHeight;
 
@@ -36,11 +38,44 @@ export default function Smack({position, scale, depth, size, count=5, sceneHeigh
             rotationOffset: {value:0},
             rand: {value:Math.random()},
             s: scale * (Math.random()+0.5),
-            bounds: posAndBounds.bounds
+            bounds: posAndBounds.bounds,
+            tabHasFocus: {value:true}
         }));
+    },[posAndBounds,count,scale,camera,depthDivider,depth])
+
+    useEffect(()=>{
+
+        const handleFocus = () => {
+            tabHasFocus.current = true;
+        };
+
+        const handleBlur = () => {
+            tabHasFocus.current = false;
+        };
+
+        window.addEventListener('focus', handleFocus);
+        window.addEventListener('blur', handleBlur);
+
+        return () => {
+            window.removeEventListener('focus', handleFocus);
+            window.removeEventListener('blur', handleBlur);
+        }
     },[])
 
     useFrame(({clock},delta)=>{
+        if(!tabHasFocus.current && clock.running) {
+            clock.stop();
+            return;
+        }
+
+        if(!clock.running) 
+        {
+            let time = clock.oldTime;
+            clock.start();
+            clock.elapsedTime = time;
+        }
+
+
         jellyfishTransforms.forEach((e)=>{
 
             let offsetX = Math.sin((clock.elapsedTime + 123456789 * e.rand.value) / 5) * delta * 0.5;
@@ -51,8 +86,7 @@ export default function Smack({position, scale, depth, size, count=5, sceneHeigh
 
             e.rotationOffset.value = Math.sin((clock.elapsedTime + 123456789 * e.rand.value) / 50) * delta * 0.5 * e.rand.value;
 
-            e.pos.add(new Vector3(offsetX,offsetY,0));
-            //console.log(e.bounds)
+            //e.pos.add(new Vector3(offsetX,offsetY,0));
         })
     });
 
