@@ -17,6 +17,9 @@ export default function Jellyfish(props) {
 
   const modelAnimations = useRef();
 
+  const maxBoundsDistance = 5;
+  const baseOffset = 0.01;
+
   const playAnimation = (index) => {
     const oppositeIndex = Math.abs(index-1)
     const rand = props.rand.value * oppositeIndex;
@@ -65,8 +68,11 @@ export default function Jellyfish(props) {
 
       jellyfishRef.current.translateY(offsetY);
     }else{
+      const randYAttractPos = props.bounds.y * 2 * props.rand.value - props.bounds.y;
+      const distanceFactor = -Math.min(Math.max((jellyfishRef.current.position.y - props.basePos[1] + randYAttractPos) / (props.bounds.y + randYAttractPos),-1),1);
+
       jellyfishRef.current.translateX(props.offsetIdle.x);
-      jellyfishRef.current.translateY(props.offsetIdle.y);
+      jellyfishRef.current.translateY(props.offsetIdle.y + baseOffset * distanceFactor);
 
       distance.current = jellyfishRef.current.position.y + goalDistance;
       time.current = clock.elapsedTime;

@@ -15,23 +15,28 @@ export default function Smack({position, scale, depth, size, count=5, sceneHeigh
 
         const boundaries = {x:width*2*size.x, y:(sceneHeight + height)*size.y};
 
-        return new Vector3(
-            position[0] + boundaries.x * (Math.random() * 2 - 1),
-            position[1] + boundaries.y * (Math.random() * 2 - 1),
-            camera.position.z - cameraDepth
-        )
+        return {
+            pos: new Vector3(
+                position[0] + boundaries.x * (Math.random() * 2 - 1),
+                position[1] + boundaries.y * (Math.random() * 2 - 1),
+                camera.position.z - cameraDepth
+            ),
+            bounds: boundaries
+        }
     }
 
+    let posAndBounds;
     const depthDivider = 2 * depth / count;
     const jellyfishTransforms = useMemo(()=>{
         return new Array(count).fill().map((_,i)=>({
-            pos: calculatePosInBounds(
+            pos: (posAndBounds = calculatePosInBounds(
                 camera.position.z - (position[2] + depth * (Math.random() * depthDivider - depth + depthDivider * i))
-            ),
+            )).pos,
             offsetIdle: new Vector2(0,0),
             rotationOffset: {value:0},
             rand: {value:Math.random()},
-            s: scale * (Math.random()+0.5)
+            s: scale * (Math.random()+0.5),
+            bounds: posAndBounds.bounds
         }));
     },[])
 
@@ -39,7 +44,7 @@ export default function Smack({position, scale, depth, size, count=5, sceneHeigh
         jellyfishTransforms.forEach((e)=>{
 
             let offsetX = Math.sin((clock.elapsedTime + 123456789 * e.rand.value) / 5) * delta * 0.5;
-            let offsetY = (Math.sin((clock.elapsedTime + 123456789 * e.rand.value) / 7)-1.3) * delta * 0.45 * (e.rand.value*2 + (1/e.rand.value/10));
+            let offsetY = (Math.sin((clock.elapsedTime + 123456789 * e.rand.value) / 7)-1.3) * delta * 0.45 * (e.rand.value*2 + (1/e.rand.value/100));
 
             e.offsetIdle.setX(offsetX);
             e.offsetIdle.setY(offsetY);
@@ -47,6 +52,7 @@ export default function Smack({position, scale, depth, size, count=5, sceneHeigh
             e.rotationOffset.value = Math.sin((clock.elapsedTime + 123456789 * e.rand.value) / 50) * delta * 0.5 * e.rand.value;
 
             e.pos.add(new Vector3(offsetX,offsetY,0));
+            //console.log(e.bounds)
         })
     });
 
@@ -57,6 +63,7 @@ export default function Smack({position, scale, depth, size, count=5, sceneHeigh
                     key={i} position={e.pos} scale={[e.s,e.s,e.s]} 
                     offsetIdle={e.offsetIdle}
                     rotationOffset={e.rotationOffset} rand={e.rand}
+                    bounds={e.bounds} basePos={position}
                 />
             })}
         </group>
