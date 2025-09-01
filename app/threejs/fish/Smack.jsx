@@ -39,8 +39,7 @@ export default function Smack({position, scale, depth, size, count=5, sceneHeigh
             rotationOffset: {value:0},
             rand: {value:Math.random()},
             s: scale * (Math.random()+0.5),
-            bounds: posAndBounds.bounds,
-            tabHasFocus: {value:true}
+            bounds: posAndBounds.bounds
         }));
     },[posAndBounds,count,scale,camera,depthDivider,depth])
 

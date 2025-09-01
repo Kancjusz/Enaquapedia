@@ -6,13 +6,10 @@ import { useFrame } from '@react-three/fiber';
 
 export default function Jellyfish(props) {
 
-  const posOnBlur = useRef(new Vector3().copy(props.position));
-
   const jellyfishRef = useRef(new Group());
   const didEffect = useRef(false);
 
   const distance = useRef(0);
-  const time = useRef(0);
   const goalDistance = 5;
 
   const index = useRef(0);
@@ -56,7 +53,7 @@ export default function Jellyfish(props) {
 
   },[])
 
-  useFrame(({clock},delta)=>{
+  useFrame(({},delta)=>{
     const clipTime = modelAnimations.current.actions[modelAnimations.current.names[1]].time;
 
     jellyfishRef.current.rotateY(props.rotationOffset.value);
@@ -77,12 +74,11 @@ export default function Jellyfish(props) {
       jellyfishRef.current.translateY(props.offsetIdle.y + baseOffset * distanceFactor);
 
       distance.current = jellyfishRef.current.position.y + goalDistance;
-      time.current = clock.elapsedTime;
     }
   })
 
   return (
-    <JellyfishModel ref={jellyfishRef} modelAnimations={modelAnimations} position={posOnBlur.current} scale={props.scale} rand={props.rand.value}/>
+    <JellyfishModel ref={jellyfishRef} modelAnimations={modelAnimations} position={props.position} scale={props.scale} rand={props.rand.value}/>
   )
 }
 
@@ -99,8 +95,6 @@ function JellyfishModel({position,scale,ref,modelAnimations,rand})
   material.needsUpdate = true;
   modelAnimations.current = {...useAnimations(animations.slice(),clone)};
   modelAnimations.current.mixer.timeScale = rand+1;
-  //modelAnimations.current.actions.Idle.setDuration(7*(rand+1) * (1/rand));
-  //console.log(modelAnimations.current.actions.Idle.duration);
 
   return (
     <group ref={ref} position={position} scale={scale} dispose={null}>
