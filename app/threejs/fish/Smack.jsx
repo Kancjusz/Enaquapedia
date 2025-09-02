@@ -8,6 +8,7 @@ export default function Smack({position, scale, depth, size, count=5, sceneHeigh
     const {camera} = useThree();
 
     const tabHasFocus = useRef(true);
+    const time = useRef(0);
 
     const docHeight = document.documentElement.scrollHeight;
 
@@ -62,29 +63,20 @@ export default function Smack({position, scale, depth, size, count=5, sceneHeigh
         }
     },[])
 
-    useFrame(({clock},delta)=>{
-        if(!tabHasFocus.current && clock.running) {
-            clock.stop();
-            return;
-        }
-
-        if(!clock.running) 
-        {
-            let time = clock.oldTime;
-            clock.start();
-            clock.elapsedTime = time;
-        }
-
+    useFrame(({},delta)=>{
+        if(!tabHasFocus.current) return;
+        
+        const fixedDelta = (delta > 0.1) ? 0.001 : delta
+        time.current += fixedDelta;
 
         jellyfishTransforms.forEach((e)=>{
-
-            let offsetX = Math.sin((clock.elapsedTime + 123456789 * e.rand.value) / 5) * delta * 0.5;
-            let offsetY = (Math.sin((clock.elapsedTime + 123456789 * e.rand.value) / 7)-1.3) * delta * 0.45 * (e.rand.value*2 + (1/e.rand.value/100));
+            let offsetX = Math.sin((time.current + 123456789 * e.rand.value) / 5) * fixedDelta * 0.5;
+            let offsetY = (Math.sin((time.current + 123456789 * e.rand.value) / 7)-1.3) * fixedDelta * 0.45 * (e.rand.value*2 + (1/e.rand.value/100));
 
             e.offsetIdle.setX(offsetX);
             e.offsetIdle.setY(offsetY);
 
-            e.rotationOffset.value = Math.sin((clock.elapsedTime + 123456789 * e.rand.value) / 50) * delta * 0.5 * e.rand.value;
+            e.rotationOffset.value = Math.sin((time.current + 123456789 * e.rand.value) / 50) * fixedDelta * 0.5 * e.rand.value;
         })
     });
 

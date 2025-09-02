@@ -63,7 +63,8 @@ export default function Jellyfish(props) {
 
       let distanceFactor = Math.min(Math.abs(distance.current - jellyfishRef.current.position.y) / goalDistance,1);
 
-      const offsetY = delta * 8 * distanceFactor * timeFactor;
+      const fixedDelta = (delta > 0.1) ? 0.01 : delta;
+      const offsetY = fixedDelta * 8 * distanceFactor * timeFactor;
 
       jellyfishRef.current.translateY(offsetY);
     }else{
