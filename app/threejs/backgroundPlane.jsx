@@ -2,7 +2,7 @@
 export default function BackgroundPlane()
 {
     return(
-        <mesh scale={400} position={[0,0,-20]}>
+        <mesh scale={500} position={[0,0,-20]}>
 
         <planeGeometry/>
         <shaderMaterial

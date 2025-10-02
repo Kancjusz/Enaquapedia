@@ -225,3 +225,41 @@ export const clownfishSettings = {
       COHESION_STRENGTH: 5,
     },
 }
+
+export const anglerfishSettings = {
+    general: {
+        NB_BOIDS: 8,
+        MIN_SCALE: 0.6,
+        MAX_SCALE: 1.5,
+        MIN_SPEED: 1.5,
+        MAX_SPEED: 2,
+        MAX_STEERING: 0.1
+    },
+
+    rules: {
+      threeD: true,
+      ALIGNEMENT: false,
+      AVOIDANCE: true,
+      COHESION: false,
+    },
+
+    wander: {
+      WANDER_RADIUS: 2,
+      WANDER_STRENGTH: 10,
+    },
+
+    alignment:{
+      ALIGN_RADIUS: 1.2,
+      ALIGN_STRENGTH: 4,
+    },
+
+    avoidance:{
+      AVOID_RADIUS: 2,
+      AVOID_STRENGTH: 10,
+    },
+
+    cohesion: {
+      COHESION_RADIUS: 1.22,
+      COHESION_STRENGTH: 4,
+    },
+}
