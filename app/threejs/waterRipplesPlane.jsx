@@ -3,7 +3,7 @@
 import { OrthographicCamera, useFBO } from "@react-three/drei";
 import { invalidate, useFrame, useThree } from "@react-three/fiber";
 import {rippleVertex, rippleFragment, renderVertex, renderFragment} from "./shaders/ripplesShader"
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import * as THREE from "three";
 
 export default function WaterRipplesPlane({sceneHeight})
@@ -19,9 +19,12 @@ export default function WaterRipplesPlane({sceneHeight})
     const material2 = useRef();
 
     const refs = useRef({
-        enableRipples: true,
+        enableRipples: false,
         prevMouse : new THREE.Vector2(0,0),
     });
+
+    const disableRipples = () => refs.current.enableRipples = false;
+    const enableRipples = () => refs.current.enableRipples = true;
 
     const {viewport} = useThree();
 
@@ -53,6 +56,16 @@ export default function WaterRipplesPlane({sceneHeight})
         uMouse: {value:new THREE.Vector2(0,0)}
     });
 
+    useEffect(()=>{
+        window.addEventListener("mousedown",enableRipples);
+        window.addEventListener("mouseup",disableRipples);
+
+        return()=>{
+            window.removeEventListener("mousedown",enableRipples);
+            window.removeEventListener("mouseup",disableRipples);
+        }
+    },[])
+
     useFrame(({clock, pointer, gl, scene, camera})=>{
 
         camera.layers.disableAll();
@@ -79,6 +92,19 @@ export default function WaterRipplesPlane({sceneHeight})
 
         gl.setRenderTarget(renderTargetB);
         gl.render(scene, secondaryCamera.current);
+
+        
+        if(!refs.current.enableRipples) 
+        {
+            material2.current.uniforms.uTextureA.value = new THREE.Texture();
+            material2.current.uniforms.uTextureB.value = renderTargetA.texture;
+            material2.current.uniforms.uMouse.value = ogpointer;
+
+            camera.layers.enableAll(0);
+            gl.render(scene, camera);
+            gl.setRenderTarget(null);
+            return;
+        }
 
         material2.current.uniforms.uTextureA.value = renderTargetB.texture;
         material2.current.uniforms.uTextureB.value = renderTargetA.texture;

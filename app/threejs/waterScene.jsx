@@ -23,6 +23,7 @@ import { Environment, Stats} from "@react-three/drei"
 import { Suspense} from "react"
 import { discusSettings, anglerfishSettings, neonTetraSettings,diamondTetraSettings, bluefaceAngelfishSettings, indianSalfinTangSettings, clownfishSettings} from "./settings"
 import * as THREE from "three";
+import { Bloom, EffectComposer, HueSaturation } from "@react-three/postprocessing"
 
 export default function WaterScene({elements,sceneHeight})
 {
@@ -41,6 +42,11 @@ export default function WaterScene({elements,sceneHeight})
                 <directionalLight color={"#bcecff"} intensity={1}/>
                 <ambientLight intensity={1} color={"#99fcff"}/>
                 
+                <EffectComposer>
+                    <Bloom/>
+                    <HueSaturation saturation={0.1}/>
+                </EffectComposer>
+
                 <Stats/>
                 <Suspense>
                     <ScrollCamera sceneHeight={sceneHeight}/>

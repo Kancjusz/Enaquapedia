@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from 'react'
-import { useGLTF, useAnimations } from '@react-three/drei'
+import { useGLTF, useAnimations, Box } from '@react-three/drei'
 import { SkeletonUtils } from 'three/examples/jsm/Addons.js';
 
 export default function Anglerfish(props) {
@@ -22,6 +22,7 @@ export default function Anglerfish(props) {
   return (
     <group {...props} dispose={null}>
       <primitive object={clone} />
+      <pointLight position={[0,0,3]} intensity={100} decay={1.7}/>
     </group>
   )
 }
