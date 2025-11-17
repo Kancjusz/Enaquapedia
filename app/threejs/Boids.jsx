@@ -1,6 +1,6 @@
 
 import { useFrame, useThree } from "@react-three/fiber";
-import {  useMemo, useRef } from "react";
+import {  useEffect, useMemo, useRef } from "react";
 import { Vector3, Vector2 } from "three";
 import { randFloat } from "three/src/math/MathUtils.js";
 
@@ -20,14 +20,18 @@ const steering = new Vector3();
 
 export default function Boids ({ fish, position, depth, settings, avoidMouse, sceneHeight, count=null, size=new Vector2(1,1)}) {
   const {camera} = useThree();
+  const stopMovement = useRef(false);
 
   const docHeight = document.documentElement.scrollHeight;
-  const cameraDepth = camera.position.z - position[2]
+  const cameraDepth = camera.position.z - position[2];
 
   const width = Math.tan((camera.fov/360) * Math.PI)*Math.abs(cameraDepth) * 2;
-  const height = width * (docHeight/window.innerWidth);
+  const boidDepthWidth = Math.tan((camera.fov/360) * Math.PI)*Math.abs(position[2]) * 2;
+  const boidDepthHeight = boidDepthWidth * (docHeight/window.innerWidth) / 2;
+  const boidDepthViewHeight = boidDepthWidth * (window.innerHeight/window.innerWidth);
+  const height = width * (docHeight/window.innerWidth) + sceneHeight;
 
-  let boundaries = {x:width*2*size.x, y:(sceneHeight + height)*size.y, z:depth};
+  let boundaries = {x:width*2*size.x, y:height*size.y, z:depth};
 
   const { MIN_SCALE, MAX_SCALE, MIN_SPEED, MAX_SPEED, MAX_STEERING } = settings.general;
   const NB_BOIDS = count == null ? settings.general.NB_BOIDS : count;
@@ -51,7 +55,32 @@ export default function Boids ({ fish, position, depth, settings, avoidMouse, sc
     }));
   }, [NB_BOIDS, boundaries, MIN_SCALE, MAX_SCALE, threeD]);
 
+  function onScroll(){
+    const scroll01 = document.documentElement.scrollTop/docHeight;
+    const spaceScroll = -2*(sceneHeight/2)*scroll01 + (sceneHeight/2);
+
+    if(spaceScroll < position[1]){ //below
+      if(MAX_SCALE==0.5)console.log(stopMovement.current);
+      stopMovement.current = (spaceScroll+boidDepthViewHeight > position[1]-boundaries.y/2) ? false : true;
+    }
+    else{ //above
+      if(MAX_SCALE==0.5)console.log(stopMovement.current);
+      stopMovement.current = (spaceScroll-boidDepthViewHeight < position[1]+boundaries.y/2) ? false : true;
+    }
+  }
+
+  useEffect(()=>{
+    window.addEventListener("scroll",onScroll);
+
+    return(()=>{
+      window.removeEventListener("scroll",onScroll);
+    })
+  },[])
+
   useFrame(({pointer}, delta) => {
+
+    if(stopMovement.current) return;
+
     for (let i = 0; i < boids.length; i++) {
       const boid = boids[i];
 
@@ -185,6 +214,7 @@ export default function Boids ({ fish, position, depth, settings, avoidMouse, sc
           generalSettings = {settings.general}
           avoidMouse={avoidMouse}
           sceneHeight={sceneHeight}
+          stopMovement={stopMovement}
         />
       ))}
     </group>
@@ -202,6 +232,7 @@ const Boid = ({
   generalSettings,
   avoidMouse,
   sceneHeight,
+  stopMovement,
   ...props
 }) => {
 
@@ -210,6 +241,7 @@ const Boid = ({
   const prevPointer = useRef(new Vector2(0,0));
 
   useFrame(({pointer},delta) => {
+    if(stopMovement.current) return;
 
     const scrollTop = window.scrollY;
     const docHeight = document.documentElement.scrollHeight;
@@ -269,6 +301,8 @@ const Boid = ({
   });
 
   return (
-    <Fish {...props} ref={group} position={position}/>
+    <>
+      {!stopMovement.current && <Fish {...props} ref={group} position={position}/>}
+    </>
   );
 };
