@@ -15,7 +15,9 @@ export const fragment = `
     void main() {
 
         vec3 tint = vec3(0., 0., 0.);
-        vec4 color = vec4(tint,1.-log(vUv.y*4.));
+        //float opacity = 1.-clamp(0.,1.,log(2.*vUv.y+0.5));
+        float opacity = clamp(0.,0.8,pow(vUv.y*1.5-1.5,4.));
+        vec4 color = vec4(tint,opacity);
 
         gl_FragColor = color;  
     }
