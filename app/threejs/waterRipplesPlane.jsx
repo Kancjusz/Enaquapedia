@@ -1,8 +1,9 @@
 'use client';
 
-import { OrthographicCamera, useFBO } from "@react-three/drei";
+import { OrthographicCamera, PerspectiveCamera, useFBO } from "@react-three/drei";
 import { invalidate, useFrame, useThree } from "@react-three/fiber";
 import {rippleVertex, rippleFragment, renderVertex, renderFragment} from "./shaders/ripplesShader"
+import {bloomVertex,bloomFragment} from "./shaders/bloomShader"
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
 
@@ -14,9 +15,11 @@ export default function WaterRipplesPlane({sceneHeight})
 
     const plane1 = useRef();
     const plane2 = useRef();
+    const planeBloom = useRef();
 
     const material1 = useRef();
     const material2 = useRef();
+    const materialBloom = useRef();
 
     const refs = useRef({
         enableRipples: false,
@@ -40,6 +43,12 @@ export default function WaterRipplesPlane({sceneHeight})
     }
     let renderTargetA = useFBO(width,height,options);
     let renderTargetB = useFBO(width,height,options);
+    let renderTargetBloom = useFBO(width,height,options);
+    let downSampledTargets = [
+        useFBO(width/2,height/2,options),
+        useFBO(width/4,height/4,options),
+        useFBO(width/8,height/8,options),
+    ]
 
     const uniformsRipples = useRef({
         uTime: {value: 0},
@@ -56,6 +65,13 @@ export default function WaterRipplesPlane({sceneHeight})
         uMouse: {value:new THREE.Vector2(0,0)}
     });
 
+    const uniformsBloom = useRef({
+        uCameraPos: {value: new THREE.Vector3(0,0,0)},
+        uTexWidth: {value: width},
+        uTexHeight: {value: height},
+        uTextureA: {value: null},
+    });
+
     useEffect(()=>{
         window.addEventListener("mousedown",enableRipples);
         window.addEventListener("mouseup",disableRipples);
@@ -67,23 +83,47 @@ export default function WaterRipplesPlane({sceneHeight})
     },[])
 
     useFrame(({clock, pointer, gl, scene, camera})=>{
-
-        camera.layers.disableAll();
-        camera.layers.enable(0);
-
         //SCROLL
         var scrollTop = window.scrollY;
         var docHeight = document.documentElement.scrollHeight;
         var winHeight = window.innerHeight;
         var scrollPercent = (scrollTop) / (docHeight - winHeight) * 2 - 1;
 
-        var scrollY = endYPosition * scrollPercent;
-        plane2.current.position.set(0,scrollY,19);
-
         //RIPPLES
         const doRipples = refs.current.enableRipples && !(pointer.x == refs.current.prevMouse.x && pointer.y == refs.current.prevMouse.y);
         const ogpointer = new THREE.Vector2((pointer.x+1)*0.5, (pointer.y+1)*0.5)
         const newPointer = doRipples ? ogpointer : new THREE.Vector2(0,0);
+
+        var scrollY = endYPosition * scrollPercent;
+        plane2.current.position.set(0,scrollY,19);
+
+        camera.layers.disableAll();
+        camera.layers.enable(0);
+
+        gl.setRenderTarget(renderTargetBloom);
+        gl.render(scene, camera);
+
+        camera.layers.disableAll();
+        camera.layers.enable(2);
+
+        secondaryCamera.current.layers.disableAll();
+        secondaryCamera.current.layers.enable(1);
+        for(let i = 0; i <= 1; i++)
+        {
+            materialBloom.current.uniforms.uTextureA.value = renderTargetBloom.texture;
+            materialBloom.current.uniforms.uCameraPos.value = camera.position;
+
+            gl.setRenderTarget(renderTargetB);
+            gl.render(scene, secondaryCamera.current);
+
+            materialBloom.current.uniforms.uTextureA.value = renderTargetB.texture;
+            materialBloom.current.uniforms.uCameraPos.value = camera.position;
+
+            gl.setRenderTarget(renderTargetBloom);
+            gl.render(scene, secondaryCamera.current);
+        }
+        secondaryCamera.current.layers.disableAll();
+        secondaryCamera.current.layers.enable(0);
 
         material1.current.uniforms.uTime.value = clock.getElapsedTime() * 2;
         material1.current.uniforms.uFrame.value += 1;
@@ -94,15 +134,12 @@ export default function WaterRipplesPlane({sceneHeight})
         gl.render(scene, secondaryCamera.current);
 
         material2.current.uniforms.uTextureA.value = renderTargetB.texture;
-        material2.current.uniforms.uTextureB.value = renderTargetA.texture;
+        material2.current.uniforms.uTextureB.value = renderTargetBloom.texture;
         material2.current.uniforms.uMouse.value = ogpointer;
 
         gl.setRenderTarget(renderTargetA);
         gl.render(scene, camera);
         gl.setRenderTarget(null);
-
-        camera.layers.disableAll();
-        camera.layers.enable(2);
 
         const temp = renderTargetB;
         renderTargetB = renderTargetA;
@@ -113,7 +150,7 @@ export default function WaterRipplesPlane({sceneHeight})
 
     return(
         <>
-            <OrthographicCamera position={[2000,0,1]} ref={secondaryCamera}/>
+            <OrthographicCamera layers={[1]} position={[2000,0,100]} ref={secondaryCamera}/>
             <mesh ref={plane1} scale={[width,height,1]} position={[2000,0,0]}>
                 <planeGeometry/>
                 <shaderMaterial
@@ -121,6 +158,18 @@ export default function WaterRipplesPlane({sceneHeight})
                     vertexShader={rippleVertex}
                     fragmentShader={rippleFragment}
                     uniforms={uniformsRipples.current}
+                    depthWrite={true}
+                    depthTest={true}
+                    toneMapped={false}
+                />
+            </mesh>
+            <mesh ref={planeBloom} layers={[1]} scale={[width,height,1]} position={[2000,0,0]}>
+                <planeGeometry/>
+                <shaderMaterial
+                    ref={materialBloom}
+                    vertexShader={bloomVertex}
+                    fragmentShader={bloomFragment}
+                    uniforms={uniformsBloom.current}
                     depthWrite={true}
                     depthTest={true}
                     toneMapped={false}
@@ -139,6 +188,7 @@ export default function WaterRipplesPlane({sceneHeight})
                     transparent={true}
                 />
             </mesh>
+
         </>
 
     )

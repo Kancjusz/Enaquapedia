@@ -7,7 +7,7 @@ import {vertex,fragment} from "./shaders/waterParticlesShader"
 export default function WaterParticles({sceneHeight})
 {
     const {viewport} = useThree();
-    const particleCount = 3000;
+    const particleCount = 5000;
     let basePositions = new Float32Array(3 * particleCount);
 
     for(let i = 0; i < particleCount * 3; i+=3)

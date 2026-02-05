@@ -89,7 +89,6 @@ export const renderFragment = `
 
     void main() {
         
-
         vec4 data = texture2D(uTextureA, vUv);
         
         vec2 distortion = 0.3 * data.zw;
