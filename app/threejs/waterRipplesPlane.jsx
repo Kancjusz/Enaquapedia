@@ -51,7 +51,6 @@ export default function WaterRipplesPlane({sceneHeight})
     });
 
     const uniformsRender = useRef({
-        doRipples: {value: 0.0},
         uTextureA: {value: null},
         uTextureB: {value: null},
         uMouse: {value:new THREE.Vector2(0,0)}
@@ -94,23 +93,6 @@ export default function WaterRipplesPlane({sceneHeight})
         gl.setRenderTarget(renderTargetB);
         gl.render(scene, secondaryCamera.current);
 
-        
-        if(refs.current.enableRipples) 
-        {
-            material2.current.uniforms.doRipples.value = 1.0;
-            
-            //material2.current.uniforms.uTextureA.value = new THREE.Texture();
-            //material2.current.uniforms.uTextureB.value = renderTargetA.texture;
-            //material2.current.uniforms.uMouse.value = ogpointer;
-
-            //camera.layers.enableAll(0);
-            //gl.render(scene, camera);
-            //gl.setRenderTarget(null);
-            return;
-        }
-        else
-            material2.current.uniforms.doRipples.value = 0.0;
-
         material2.current.uniforms.uTextureA.value = renderTargetB.texture;
         material2.current.uniforms.uTextureB.value = renderTargetA.texture;
         material2.current.uniforms.uMouse.value = ogpointer;
@@ -132,7 +114,7 @@ export default function WaterRipplesPlane({sceneHeight})
     return(
         <>
             <OrthographicCamera position={[2000,0,1]} ref={secondaryCamera}/>
-            <mesh ref={plane1} layers={[2]} scale={[width,height,1]} position={[2000,0,0]}>
+            <mesh ref={plane1} scale={[width,height,1]} position={[2000,0,0]}>
                 <planeGeometry/>
                 <shaderMaterial
                     ref={material1}

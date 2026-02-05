@@ -81,7 +81,6 @@ export const renderVertex = `
 
 export const renderFragment = `
     varying vec2 vUv;
-    uniform float doRipples;
     uniform sampler2D uTextureA;
     uniform sampler2D uTextureB;
     uniform vec2 uMouse;
