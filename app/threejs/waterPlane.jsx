@@ -17,14 +17,12 @@ export default function WaterPlane({sceneHeight})
         uTime: {value: 0},
         uTopOffset: {value:0.3},
         uTexture: {value: voronoiTexture},
-        uSceneHeight: {value: sceneHeight}
     });
 
     const uniforms2 = useRef({
         uTime: {value: 0},
         uTopOffset: {value:0.47},
         uTexture: {value: voronoiTexture},
-        uSceneHeight: {value: sceneHeight}
     });
 
     useFrame(({clock})=>{

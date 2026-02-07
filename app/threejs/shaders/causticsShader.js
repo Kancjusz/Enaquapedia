@@ -32,7 +32,7 @@ export const fragment = `
         float fade = smoothstep(0.4,1.,abs(vUv.y));
         float fade2 = smoothstep(0.9,1.,abs(vUv.y));
 
-        vec4 color = vec4(vec3(alpha),alpha * fade*0.5);
+        vec4 color = vec4(vec3(alpha),alpha * fade*0.75);
         //color = vec4(clamp(color.xyz * fade,0.,1.),min((1.-fade2) * 0.5 + color.w,1.));
 
         vec4 tint = vec4(0.78, 0.98, 1.,1.);

@@ -16,6 +16,7 @@ import Cardinalfish from "./fish/Cardinalfish"
 import IndianSalfinTang from "./fish/IndianSalfinTang"
 import BackgroundPlane from "./backgroundPlane"
 import WaterRipplesPlane from "./waterRipplesPlane"
+import CausticsPlane from "./causticsPlane"
 import Title from "./title"
 
 import ScrollCamera from "./cameraScroll"
@@ -66,6 +67,9 @@ export default function WaterScene({elements,sceneHeight})
                     <WaterPlane sceneHeight={sceneHeight}/>
                     <WaterDepthPlane sceneHeight={sceneHeight}/>
                     <WaterRipplesPlane sceneHeight={sceneHeight}/>
+                    <CausticsPlane sceneHeight={sceneHeight} scale={[100,500,1]} opacity={0.05} seed={1234} depth={-10}/>
+                    <CausticsPlane sceneHeight={sceneHeight} scale={[70,510,1]} opacity={0.05} seed={2135} depth={0}/>
+                    <CausticsPlane sceneHeight={sceneHeight} scale={[10,520,1]} opacity={0.08} seed={7777} depth={19}/>
                     <Environment preset="city" environmentIntensity={0.5}/>
                 </Suspense>
             </Canvas>
