@@ -20,7 +20,7 @@ export default function Anglerfish(props) {
   }, [])
 
   return (
-    <group {...props} dispose={null}>
+    <group {...props} dispose={null} layers={1}>
       <primitive object={clone} />
       <pointLight position={[0,0,3]} intensity={100} decay={1.7}/>
     </group>
