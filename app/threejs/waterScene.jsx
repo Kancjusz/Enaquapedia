@@ -16,10 +16,11 @@ import Cardinalfish from "./fish/Cardinalfish"
 import IndianSalfinTang from "./fish/IndianSalfinTang"
 import BackgroundPlane from "./backgroundPlane"
 import WaterRipplesPlane from "./waterRipplesPlane"
+import Title from "./title"
 
 import ScrollCamera from "./cameraScroll"
 import {Canvas} from "@react-three/fiber"
-import { Box, Environment, OrbitControls, Plane, Stats} from "@react-three/drei"
+import { Box, Center, Environment, MeshWobbleMaterial, OrbitControls, Plane, Stats, Text, Text3D} from "@react-three/drei"
 import { Suspense, useRef} from "react"
 import { discusSettings, anglerfishSettings, neonTetraSettings,diamondTetraSettings, bluefaceAngelfishSettings, indianSalfinTangSettings, clownfishSettings} from "./settings"
 import * as THREE from "three";
@@ -44,6 +45,7 @@ export default function WaterScene({elements,sceneHeight})
                 <ambientLight layers={[0]} intensity={1} color={"#99fcff"}/>
                 <Stats/>
                 <Suspense>
+                    <Title sceneHeight={sceneHeight}/>
                     <fog ref={showFog} attach="fog" args={["#53a0bd", 0, 28]}/>
                     <ScrollCamera sceneHeight={sceneHeight} showFog={showFog} scrollPercent={scrollPercent}/>
                     {elements.map((e)=>e)}
