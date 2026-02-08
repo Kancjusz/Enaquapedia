@@ -16,16 +16,16 @@ export default function Jellyfish(props) {
 
   const modelAnimations = useRef();
 
-  const baseOffset = 0.01;
+  const baseOffset = 0.03;
 
   const playAnimation = (index) => {
     const oppositeIndex = Math.abs(index-1)
     const rand = props.rand.value * oppositeIndex;
 
     const clip = modelAnimations.current.actions[modelAnimations.current.names[index]];
-    clip.setDuration(7);
+    clip.setDuration(7/5);
     clip.startAt(3 * rand);
-    clip.reset().fadeIn(2).play();
+    clip.reset().fadeIn(2/5).play();
   }
 
   useEffect(()=>{
@@ -39,7 +39,7 @@ export default function Jellyfish(props) {
 
     const eventFunc = () => {
       const oppositeIndex = Math.abs(index.current-1);
-      modelAnimations.current.actions[modelAnimations.current.names[index.current]].fadeOut(1.5 * oppositeIndex + 0.5);
+      modelAnimations.current.actions[modelAnimations.current.names[index.current]].fadeOut((1.5 * oppositeIndex + 0.5)/5);
       index.current = oppositeIndex;
       playAnimation(oppositeIndex)
     }
@@ -64,15 +64,31 @@ export default function Jellyfish(props) {
       let distanceFactor = Math.min(Math.abs(distance.current - jellyfishRef.current.position.y) / goalDistance,1);
 
       const fixedDelta = (delta > 0.1) ? 0.01 : delta;
-      const offsetY = fixedDelta * 8 * distanceFactor * timeFactor;
+      const offsetY = fixedDelta * 8 * distanceFactor * timeFactor * 5;
 
       jellyfishRef.current.translateY(offsetY);
     }else{
       const randYAttractPos = props.bounds.y * 2 * props.rand.value - props.bounds.y;
       const distanceFactor = -Math.min(Math.max((jellyfishRef.current.position.y - props.basePos[1] + randYAttractPos) / (props.bounds.y + randYAttractPos),-1),1);
 
-      jellyfishRef.current.translateX(props.offsetIdle.x);
-      jellyfishRef.current.translateY(props.offsetIdle.y + baseOffset * distanceFactor);
+      let offsetX = jellyfishRef.current.position.x + props.offsetIdle.x;
+      let offsetY = jellyfishRef.current.position.y + props.offsetIdle.y + baseOffset * distanceFactor;
+      let newPos = new Vector3(offsetX, offsetY, jellyfishRef.current.position.z);
+      
+      console.log(offsetX > props.bounds.x || offsetX < -props.bounds.x);
+      
+      if(offsetX > props.bounds.x || offsetX < -props.bounds.x)
+        newPos.setX(offsetX - 2* props.offsetIdle.x);
+      else
+        newPos.setX(offsetX);
+
+      if(offsetY > props.bounds.y || offsetY < -props.bounds.y)
+        newPos.setY(offsetY - 2* props.offsetIdle.y);
+      else
+        newPos.setY(offsetY);
+
+      jellyfishRef.current.position.set(newPos.x,newPos.y,newPos.z);
+
 
       distance.current = jellyfishRef.current.position.y + goalDistance;
     }

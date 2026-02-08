@@ -16,7 +16,7 @@ export default function Smack({position, scale, depth, size, count=5, sceneHeigh
         const width = Math.tan((camera.fov/360) * Math.PI)*Math.abs(cameraDepth) * 2;
         const height = width * (docHeight/window.innerWidth);
 
-        const boundaries = {x:width*2*size.x, y:(sceneHeight + height)*size.y};
+        const boundaries = {x:width*2*size.x, y:(sceneHeight + height)*size.y, z:depth};
         const side = index % 2;
 
         return {
@@ -42,7 +42,7 @@ export default function Smack({position, scale, depth, size, count=5, sceneHeigh
             s: scale * (Math.random()+0.5),
             bounds: posAndBounds.bounds
         }));
-    },[posAndBounds,count,scale,camera,depthDivider,depth])
+    },[posAndBounds,count,scale,camera,depthDivider,depth,position])
 
     useEffect(()=>{
 
@@ -70,8 +70,8 @@ export default function Smack({position, scale, depth, size, count=5, sceneHeigh
         time.current += fixedDelta;
 
         jellyfishTransforms.forEach((e)=>{
-            let offsetX = Math.sin((time.current + 123456789 * e.rand.value) / 5) * fixedDelta * 0.5;
-            let offsetY = (Math.sin((time.current + 123456789 * e.rand.value) / 7)-1.3) * fixedDelta * 0.45 * (e.rand.value*2 + (1/e.rand.value/100));
+            let offsetX = Math.sin((time.current + 123456789 * e.rand.value) / 5) * fixedDelta * 5;
+            let offsetY = (Math.sin((time.current + 123456789 * e.rand.value) / 7)-1.3) * fixedDelta * 0.45 * (e.rand.value*2 + (1/e.rand.value/100)) * 5;
 
             e.offsetIdle.setX(offsetX);
             e.offsetIdle.setY(offsetY);

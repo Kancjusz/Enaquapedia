@@ -69,14 +69,6 @@ export default function Boids ({ fish, position, depth, settings, avoidMouse, sc
     }
   }
 
-  useEffect(()=>{
-    window.addEventListener("scroll",onScroll);
-
-    return(()=>{
-      window.removeEventListener("scroll",onScroll);
-    })
-  },[])
-
   useFrame(({pointer}, delta) => {
 
     if(stopMovement.current) return;
@@ -278,15 +270,14 @@ const Boid = ({
       const angle = Math.acos(velocity.clone().dot(subtractedVec)/(subtractedVec.length() * velocity.length()));
       const rotatedVelocity = velocity.clone().applyAxisAngle(axis,angle);
 
-      velocity.add(rotatedVelocity.clone().normalize().multiplyScalar((maxDistance-distance)/ maxDistance * 0.1));
+      velocity.add(rotatedVelocity.clone().normalize().multiplyScalar((maxDistance-distance)/ maxDistance * 0.1).multiplyScalar(2));
     }
     else
-    {
-      
+    {    
       velocity.clampLength(
         0,
         remap(props.scale, MIN_SCALE, MAX_SCALE, MAX_SPEED, MIN_SPEED) * delta
-      );
+      ).multiplyScalar(5);
     }
 
     copyPosition.add(velocity);
